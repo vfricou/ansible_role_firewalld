@@ -1,0 +1,36 @@
+---
+- name: 'Firewalld | Apply firewall ports rules'
+  notify: 'Reload firewalld'
+  loop: '{{ rules.ports }}'
+  ansible.posix.firewalld:
+    state: '{{ state }}'
+    immediate: false
+    permanent: true
+    port: '{{ item }}'
+
+- name: 'Firewalld | Apply firewall sources rules'
+  notify: 'Reload firewalld'
+  loop: '{{ rules.sources }}'
+  ansible.posix.firewalld:
+    state: '{{ state }}'
+    immediate: false
+    permanent: true
+    source: '{{ item }}'
+
+- name: 'Firewalld | Apply firewall services rules'
+  notify: 'Reload firewalld'
+  loop: '{{ rules.services }}'
+  ansible.posix.firewalld:
+    state: '{{ state }}'
+    immediate: false
+    permanent: true
+    service: '{{ item }}'
+
+- name: 'Firewalld | Apply firewall rich rules'
+  notify: 'Reload firewalld'
+  loop: '{{ rules.rich_rules }}'
+  ansible.posix.firewalld:
+    state: '{{ state }}'
+    immediate: false
+    permanent: true
+    rich_rule: '{{ item }}'

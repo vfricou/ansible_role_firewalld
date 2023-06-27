@@ -1,0 +1,9 @@
+---
+- name: 'Reload firewalld'
+  become: true
+  become_user: 'root'
+  ansible.builtin.systemd:
+    name: firewalld
+    state: reloaded
+    enabled: true
+    daemon_reload: true

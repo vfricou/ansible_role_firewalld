@@ -3,3 +3,13 @@
   tags:
     - always
   ansible.builtin.import_tasks: validator/main.yml
+
+- name: 'Import prerequisites tasks'
+  ansible.builtin.import_tasks: prerequisites/main.yml
+
+- name: 'Import firewalld tasks'
+  become: true
+  become_user: 'root'
+  tags:
+    - firewall
+  ansible.builtin.import_tasks: firewalld/main.yml

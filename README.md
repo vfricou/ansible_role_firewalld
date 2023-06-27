@@ -11,7 +11,44 @@ Any pre-requisites that may not be covered by Ansible itself or the role should 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+`fwl_services`: Permit to define custom services will be included in Firewalld configuration
+Example : 
+```yaml
+fwl_services:
+  - name: 'test-service'
+    description: 'Service long description'
+    ports:
+      - '8080'
+      - '8443/tcp'
+      - '9000/udp' 
+```
+
+`fwl_rules`: Permit to define rules will be included in Firewalld configuration.
+Allow section will open specified.
+Deny section will close specified.
+Example :
+```yaml
+fwl_rules:
+  allow:
+    ports:
+      - '443/tcp'
+    sources:
+      - '1.1.1.1'
+    services:
+      - 'ssh'
+    rich_rules:
+      - 'rule family="ipv4" source address="1.2.3.4/32" port port="8000" protocol="tcp" accept'
+  deny:
+    ports:
+      - '80/tcp'
+      - '443/tcp'
+    sources:
+      - '1.1.1.1'
+    services:
+      - 'cockpit'
+    rich_rules:
+      - 'rule family="ipv4" source address="1.2.3.4/32" port port="8000" protocol="tcp" accept'
+```
 
 Dependencies
 ------------

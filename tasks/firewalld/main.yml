@@ -1,0 +1,73 @@
+---
+- name: 'Firewalld | Disable all default rules'
+  tags:
+    - firewalld_cleanup
+  loop:
+    - cockpit
+    - dhcpv6-client
+  ansible.posix.firewalld:
+    state: disabled
+    permanent: true
+    immediate: true
+    zone: 'public'
+    service: '{{ item }}'
+
+- name: 'Firewalld | Allow SSH service'
+  tags:
+    - firewalld_ssh
+  ansible.posix.firewalld:
+    state: enabled
+    permanent: true
+    immediate: true
+    zone: 'public'
+    service: 'ssh'
+
+- name: 'Firewalld | Deploy specific services configuration'
+  when: fwl_services is defined
+  tags:
+    - firewalld_services
+  loop: '{{ fwl_services }}'
+  vars:
+    name: '{{ item.name }}'
+    description: '{{ item.description }}'
+    ports: '{{ item.ports }}'
+  register: firewalld_services_deployment
+  ansible.builtin.template:
+    src: firewalld/services.xml.j2
+    dest: '/etc/firewalld/services/{{ item.name }}.xml'
+    owner: 'root'
+    group: 'root'
+    mode: '0600'
+    seuser: system_u
+    serole: object_r
+    setype: lib_t
+    selevel: s0
+
+- name: 'Firewalld | Reload configuration to load new services' # noqa no-handler
+  tags:
+    - firewalld_services
+  when: firewalld_services_deployment.changed
+  notify: 'Reload firewalld'
+  ansible.builtin.systemd:
+    name: firewalld
+    state: reloaded
+
+- name: 'Firewalld | Apply firewall allow rules'
+  when: fwl_rules is defined
+  tags:
+    - firewall_rules
+  vars:
+    key: '{{ item }}'
+    rules: '{{ fwl_rules.allow }}'
+    state: 'enabled'
+  ansible.builtin.include_tasks: firewalld/rules.yml
+
+- name: 'Firewalld | Apply firewall deny rules'
+  when: fwl_rules is defined
+  tags:
+    - firewall_rules
+  vars:
+    key: '{{ item }}'
+    rules: '{{ fwl_rules.deny }}'
+    state: 'disabled'
+  ansible.builtin.include_tasks: firewalld/rules.yml

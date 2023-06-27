@@ -9,4 +9,3 @@ supported_platforms:
 packages:
   requirements:
     - firewalld
-

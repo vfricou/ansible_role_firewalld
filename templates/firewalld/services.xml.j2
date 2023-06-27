@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>{{ name }}</short>
+  <description>{{ description }}</description>
+{% for port_data in ports %}
+{% set port = port_data.split('/') %}
+  <port port="{{ port[0] }}" protocol="{{ port[1]|default('tcp') }}"/>
+{% endfor %}
+</service>
