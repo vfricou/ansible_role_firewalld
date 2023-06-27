@@ -1,0 +1,16 @@
+galaxy_info:
+  author: 'Vincent Fricou'
+  role_name: 'firewalld'
+  namespace: 'vfricou'
+  description: 'Ansible role to manage firewalld'
+  issue_tracker_url: 'https://github.com/vfricou/ansible_role_firewalld'
+  license: 'MIT'
+
+  min_ansible_version: '2.10'
+  platforms:
+    - name: 'Debian'
+      versions:
+        - bookworm
+
+  galaxy_tags: []
+dependencies: []
