@@ -1,0 +1,12 @@
+---
+# OS requirements
+supported_platforms:
+  - name: Debian
+    versions:
+      - 12
+
+# Requirements
+packages:
+  requirements:
+    - firewalld
+

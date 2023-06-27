@@ -1,0 +1,49 @@
+---
+- name: "Validator | Populate"
+  tags:
+    - always
+  ansible.builtin.set_fact:
+    supported_os: "{{ supported_platforms | json_query('[].name') }}"
+
+- name: "Validator | Check os support"
+  tags:
+    - always
+  ansible.builtin.assert:
+    that:
+      - ansible_distribution in supported_os
+    fail_msg: "Your OS {{ ansible_distribution }} is not supported"
+
+- name: "Validator | Populate supported releases"
+  tags:
+    - always
+  ansible.builtin.set_fact:
+    supported_versions: "{{ (supported_platforms | selectattr('name', 'match', ansible_distribution) | list | first).versions }}"
+
+- name: "Validator | Assert support"
+  tags:
+    - always
+  ansible.builtin.assert:
+    that:
+      - ansible_distribution_version|int in supported_versions|list
+    fail_msg: "Your distribution {{ ansible_distribution }} {{ ansible_distribution_version }} ({{ ansible_distribution_release }}) is not supported"
+
+- name: "Validator | Hardware requirements"
+  when: platform_requirement is defined
+  block:
+    - name: "Validator | Assert memory requirements"
+      when: platform_requirement.memory is defined
+      tags:
+        - always
+      ansible.builtin.assert:
+        that:
+          - ansible_memtotal_mb|int >= {{ platform_requirement.memory }}
+        fail_msg: "Your platform {{ ansible_fqdn }} doesn’t meet memory requirements ({{ platform_requirement.memory }})"
+
+    - name: "Validator | Assert CPU requirements"
+      when: platform_requirement.cpu is defined
+      tags:
+        - always
+      ansible.builtin.assert:
+        that:
+          - ansible_processor_nproc|int >= {{ platform_requirement.cpu }}
+        fail_msg: "Your platform {{ ansible_fqdn }} doesn’t meet CPU requirements ({{ platform_requirement.cpu }})"
