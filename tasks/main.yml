@@ -12,4 +12,5 @@
   become_user: 'root'
   tags:
     - firewall
+    - firewalld
   ansible.builtin.import_tasks: firewalld/main.yml
