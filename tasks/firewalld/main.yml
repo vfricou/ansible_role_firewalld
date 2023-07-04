@@ -60,7 +60,11 @@
     key: '{{ item }}'
     rules: '{{ fwl_rules.allow }}'
     state: 'enabled'
-  ansible.builtin.include_tasks: firewalld/rules.yml
+  ansible.builtin.include_tasks:
+    file: firewalld/rules.yml
+    apply:
+      tags:
+        - firewall_rules
 
 - name: 'Firewalld | Apply firewall deny rules'
   when: fwl_rules is defined
@@ -70,4 +74,8 @@
     key: '{{ item }}'
     rules: '{{ fwl_rules.deny }}'
     state: 'disabled'
-  ansible.builtin.include_tasks: firewalld/rules.yml
+  ansible.builtin.include_tasks:
+    file: firewalld/rules.yml
+    apply:
+      tags:
+        - firewall_rules
