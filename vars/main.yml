@@ -1,6 +1,9 @@
 ---
 # OS requirements
 supported_platforms:
+  - name: Rocky
+    versions:
+      - 9
   - name: Debian
     versions:
       - 12
